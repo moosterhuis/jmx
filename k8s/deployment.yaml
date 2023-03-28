@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: jmx
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=30001 -Dcom.sun.management.jmxremote.rmi.port=30001 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Djava.rmi.server.hostname=nlleq0413001668 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdumpJ.hprof
+          image: moosterhuis/jmx
+          ports:
+            - containerPort: 8088
+          volumeMounts:
+            - name: heap-dumps
+              mountPath: /dumps
+      volumes:
+        - name: heap-dumps
